@@ -1,0 +1,8 @@
+const express = require('express');
+const router = express.Router();
+const { createMeeting, getMeetingById } = require('../controllers/meetingController');
+
+router.post('/create', createMeeting);
+router.get('/:id', getMeetingById);
+
+module.exports = router;
