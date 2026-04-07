@@ -44,36 +44,60 @@ const Meeting = () => {
     <Box
       sx={{
         minHeight: '100vh',
+        height: '100vh',
         display: 'flex',
         flexDirection: 'column',
         backgroundColor: '#121212',
+        overflow: 'hidden',
       }}
     >
+      {/* Main Content Area with max-width container */}
       <Box
         sx={{
           flex: 1,
           display: 'flex',
           flexDirection: 'column',
+          maxWidth: '1400px',
+          width: '100%',
+          mx: 'auto',
           p: { xs: 1.5, md: 2 },
-          pb: { xs: '100px', md: 2 },
+          pb: { xs: '80px', md: 2 },
+          overflow: 'auto',
         }}
       >
-        <Typography variant="h6" sx={{ mb: { xs: 1.5, md: 2 }, color: 'white', fontSize: { xs: '1rem', md: '1.25rem' } }}>
+        <Typography 
+          variant="h6" 
+          sx={{ 
+            mb: { xs: 1.5, md: 2 }, 
+            color: 'white', 
+            fontSize: { xs: '0.9rem', md: '1.1rem' },
+            flexShrink: 0,
+          }}
+        >
           Meeting: {id} ({totalParticipants} participants)
         </Typography>
 
-        <Grid container spacing={{ xs: 1.5, md: 2 }} sx={{ flex: 1 }}>
-          <Grid item xs={12} md={gridSize}>
+        <Grid 
+          container 
+          spacing={{ xs: 1.5, md: 2 }} 
+          sx={{ 
+            flex: 1,
+            alignContent: 'flex-start',
+            justifyContent: 'center',
+          }}
+        >
+          <Grid item xs={12} md={gridSize} sx={{ maxWidth: { md: '720px' } }}>
             <VideoCard stream={isScreenSharing ? screenStream : localStream} username="You" />
           </Grid>
           {peers.map((peer) => (
-            <Grid key={peer.userId} item xs={12} md={gridSize}>
+            <Grid key={peer.userId} item xs={12} md={gridSize} sx={{ maxWidth: { md: '720px' } }}>
               <VideoCard stream={peer.stream} username={`User ${peer.userId.slice(-4)}`} />
             </Grid>
           ))}
         </Grid>
       </Box>
 
+      {/* Control Bar - Fixed on mobile, relative on desktop */}
       <Box
         sx={{
           display: 'flex',
@@ -85,8 +109,15 @@ const Meeting = () => {
           left: { xs: 0, md: 'auto' },
           right: { xs: 0, md: 'auto' },
           zIndex: 1000,
-          background: { xs: 'linear-gradient(to top, rgba(18,18,18,1) 0%, rgba(18,18,18,0.9) 60%, transparent 100%)', md: 'transparent' },
-          pt: { xs: 4, md: 0 },
+          background: { 
+            xs: 'linear-gradient(to top, rgba(18,18,18,1) 0%, rgba(18,18,18,0.95) 50%, transparent 100%)', 
+            md: 'transparent' 
+          },
+          pt: { xs: 2, md: 0 },
+          pointerEvents: 'none',
+          '& > *': {
+            pointerEvents: 'auto',
+          },
         }}
       >
         <ControlBar
@@ -117,7 +148,7 @@ const Meeting = () => {
           onClick={() => setIsChatOpen(true)}
           sx={{
             position: 'fixed',
-            bottom: { xs: 100, md: 24 },
+            bottom: { xs: 90, md: 24 },
             right: { xs: 16, md: 24 },
             display: { xs: 'flex', md: 'none' },
             background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',

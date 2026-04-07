@@ -21,6 +21,7 @@ const ParticipantsPanel = ({ participants, open, onClose, currentUserId }) => {
       PaperProps={{
         sx: {
           width: 300,
+          maxWidth: '100%',
           backgroundColor: 'rgba(30, 30, 30, 0.95)',
           backdropFilter: 'blur(15px)',
           boxShadow: '-4px 0 24px rgba(0, 0, 0, 0.4)',

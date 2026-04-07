@@ -27,6 +27,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/meeting', require('./routes/meetingRoutes'));
+app.use('/api/users', require('./routes/userRoutes'));
 
 require('./sockets/meetingSocket')(io);
 

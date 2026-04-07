@@ -7,20 +7,15 @@ import {
   Button,
   TextField,
   Paper,
-  AppBar,
-  Toolbar,
-  IconButton,
-  Avatar,
 } from '@mui/material';
 import {
   Videocam as VideocamIcon,
   Login as LoginIcon,
-  HelpOutline as HelpIcon,
-  Settings as SettingsIcon,
   Hd as HdIcon,
   Security as SecurityIcon,
   SurroundSound as AudioIcon,
 } from '@mui/icons-material';
+import Navbar from '../components/Navbar';
 import { createMeeting } from '../services/meetingApi';
 
 const Home = () => {
@@ -54,7 +49,7 @@ const Home = () => {
         minHeight: '100vh',
         background: 'linear-gradient(180deg, #0a0a0f 0%, #12121a 50%, #1a1a2e 100%)',
         position: 'relative',
-        overflow: 'hidden',
+        overflowX: 'hidden',
       }}
     >
       {/* Background gradient orbs */}
@@ -84,118 +79,16 @@ const Home = () => {
       />
 
       {/* Navbar */}
-      <AppBar
-        position="static"
-        elevation={0}
-        sx={{
-          backgroundColor: 'transparent',
-          borderBottom: '1px solid rgba(255,255,255,0.05)',
-        }}
-      >
-        <Toolbar sx={{ justifyContent: 'space-between', px: { xs: 2, md: 4 } }}>
-          {/* Logo */}
-          <Typography
-            variant="h5"
-            sx={{
-              fontWeight: 800,
-              background: 'linear-gradient(90deg, #6366f1, #8b5cf6)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-              cursor: 'pointer',
-            }}
-            onClick={() => navigate('/')}
-          >
-            MeetX
-          </Typography>
-
-          {/* Center Navigation */}
-          <Box
-            sx={{
-              display: { xs: 'none', md: 'flex' },
-              gap: 4,
-              alignItems: 'center',
-            }}
-          >
-            <Typography
-              sx={{
-                color: 'white',
-                opacity: 0.9,
-                fontWeight: 500,
-                cursor: 'pointer',
-                '&:hover': { opacity: 1 },
-                transition: 'all 0.3s ease',
-              }}
-            >
-              Meetings
-            </Typography>
-            <Typography
-              sx={{
-                color: 'white',
-                opacity: 0.6,
-                fontWeight: 500,
-                cursor: 'pointer',
-                '&:hover': { opacity: 1 },
-                transition: 'all 0.3s ease',
-              }}
-            >
-              Recordings
-            </Typography>
-            <Typography
-              sx={{
-                color: 'white',
-                opacity: 0.6,
-                fontWeight: 500,
-                cursor: 'pointer',
-                '&:hover': { opacity: 1 },
-                transition: 'all 0.3s ease',
-              }}
-            >
-              Schedule
-            </Typography>
-          </Box>
-
-          {/* Right Icons */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <IconButton
-              sx={{
-                color: 'rgba(255,255,255,0.6)',
-                '&:hover': { color: 'white', backgroundColor: 'rgba(255,255,255,0.1)' },
-              }}
-            >
-              <HelpIcon />
-            </IconButton>
-            <IconButton
-              sx={{
-                color: 'rgba(255,255,255,0.6)',
-                '&:hover': { color: 'white', backgroundColor: 'rgba(255,255,255,0.1)' },
-              }}
-            >
-              <SettingsIcon />
-            </IconButton>
-            <Avatar
-              sx={{
-                ml: 1,
-                width: 36,
-                height: 36,
-                bgcolor: 'rgba(99,102,241,0.3)',
-                border: '2px solid rgba(99,102,241,0.5)',
-                cursor: 'pointer',
-                '&:hover': {
-                  borderColor: '#6366f1',
-                },
-              }}
-            >
-              <Typography variant="caption" sx={{ color: 'white', fontWeight: 600 }}>
-                U
-              </Typography>
-            </Avatar>
-          </Box>
-        </Toolbar>
-      </AppBar>
+      <Navbar />
 
       {/* Hero Section */}
-      <Container maxWidth="md">
+      <Container 
+        maxWidth="lg"
+        sx={{
+          maxWidth: '1200px !important',
+          px: { xs: 2, md: 3 },
+        }}
+      >
         <Box
           display="flex"
           flexDirection="column"

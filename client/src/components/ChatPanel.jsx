@@ -71,6 +71,7 @@ const ChatPanel = ({ meetingId, open, onClose }) => {
       PaperProps={{
         sx: {
           width: 320,
+          maxWidth: '100%',
           backgroundColor: 'rgba(30, 30, 30, 0.95)',
           backdropFilter: 'blur(15px)',
           boxShadow: '-4px 0 24px rgba(0, 0, 0, 0.4)',
@@ -92,7 +93,7 @@ const ChatPanel = ({ meetingId, open, onClose }) => {
         />
       </Box>
 
-      <Box sx={{ flex: 1, overflow: 'auto', p: 2, height: 'calc(100vh - 180px)' }}>
+      <Box sx={{ flex: 1, overflow: 'auto', p: 2, height: { xs: 'calc(100vh - 140px)', md: 'calc(100vh - 180px)' } }}>
         <List sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
           {messages.map((msg, index) => (
             <ListItem
