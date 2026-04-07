@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Typography, Container, Paper, TextField, Button, Avatar, Tabs, Tab, Divider } from '@mui/material';
+import { Box, Typography, Container, Paper, TextField, Button, Avatar, Tabs, Tab, Divider, Alert } from '@mui/material';
 import { Person as PersonIcon, Lock as LockIcon, Google as GoogleIcon } from '@mui/icons-material';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../context/AuthContext';
@@ -11,6 +11,7 @@ const Account = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (user) {
@@ -20,11 +21,21 @@ const Account = () => {
 
   const handleGoogleSignIn = async () => {
     try {
+      setError(null);
       setLoading(true);
-      await signInWithGoogle();
-      navigate('/meetings');
+      console.log('=== Starting Google Sign In from Account page ===');
+      
+      const userData = await signInWithGoogle();
+      
+      if (userData) {
+        console.log('Sign in successful, navigating to /meetings');
+        navigate('/meetings');
+      } else {
+        console.log('Sign in returned null (popup cancelled)');
+      }
     } catch (error) {
-      console.error('Sign in error:', error);
+      console.error('Sign in failed in Account component:', error);
+      setError(error.message || 'Failed to sign in with Google');
     } finally {
       setLoading(false);
     }
@@ -80,6 +91,11 @@ const Account = () => {
           </Box>
 
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+            {error && (
+              <Alert severity="error" sx={{ backgroundColor: 'rgba(211, 47, 47, 0.1)', color: '#ff8a80' }}>
+                {error}
+              </Alert>
+            )}
             <Button
               variant="contained"
               size="large"
