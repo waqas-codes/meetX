@@ -22,16 +22,24 @@ const Home = () => {
   const navigate = useNavigate();
   const [meetingId, setMeetingId] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleStartMeeting = async () => {
     setLoading(true);
+    setError(null);
     try {
       const response = await createMeeting();
-      const newMeetingId = response.data.meetingId;
+      console.log('Meeting created:', response);
+      const newMeetingId = response.data?.meetingId || response.meetingId;
+      if (!newMeetingId) {
+        throw new Error('No meeting ID received from server');
+      }
       navigate(`/meeting/${newMeetingId}`);
-    } catch (error) {
-      console.error('Error creating meeting:', error);
-      alert('Failed to create meeting. Please try again.');
+    } catch (err) {
+      console.error('Error creating meeting:', err);
+      const errorMsg = err.message || 'Failed to create meeting. Please try again.';
+      setError(errorMsg);
+      alert(`Error: ${errorMsg}`);
     } finally {
       setLoading(false);
     }

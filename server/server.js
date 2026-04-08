@@ -4,7 +4,9 @@ const dotenv = require('dotenv');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
 
-const connectDB = require('./config/db');
+const { connectDB } = require('./config/db');
+const dns = require('dns')
+dns.setServers(["1.1.1.1", "8.8.8.8"])
 
 dotenv.config();
 
@@ -17,8 +19,21 @@ const io = new Server(httpServer, {
   },
 });
 
-app.use(cors());
+// CORS configuration
+const corsOptions = {
+  origin: process.env.FRONTEND_URL || '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+};
+app.use(cors(corsOptions));
 app.use(express.json());
+
+// Request logging middleware
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+  next();
+});
 
 connectDB();
 
