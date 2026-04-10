@@ -4,6 +4,8 @@ const { checkDBConnection } = require('../config/db');
 
 exports.createMeeting = async (req, res) => {
   try {
+    console.log('[POST /api/meeting/create] Request received from:', req.headers.origin || 'unknown');
+    
     // Check if MongoDB is connected
     if (!checkDBConnection()) {
       console.error('Cannot create meeting: MongoDB not connected');
@@ -25,9 +27,9 @@ exports.createMeeting = async (req, res) => {
     
     console.log('Saving meeting to database...');
     await meeting.save();
-    console.log('Meeting saved successfully');
+    console.log('Meeting saved successfully:', meetingId);
     
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       data: {
         meetingId: meeting.meetingId,
@@ -39,7 +41,7 @@ exports.createMeeting = async (req, res) => {
     console.error('Error:', error.message);
     console.error('Stack:', error.stack);
     
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: 'Failed to create meeting',
       error: error.message,
@@ -50,7 +52,7 @@ exports.createMeeting = async (req, res) => {
 exports.getMeetingById = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log('Looking for meeting:', id);
+    console.log('[GET /api/meeting/:id] Looking for meeting:', id);
     
     const meeting = await Meeting.findOne({ meetingId: id });
     
@@ -63,7 +65,7 @@ exports.getMeetingById = async (req, res) => {
     }
     
     console.log('Meeting found:', meeting.meetingId);
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       data: {
         meetingId: meeting.meetingId,
@@ -74,7 +76,7 @@ exports.getMeetingById = async (req, res) => {
     console.error('=== GET MEETING ERROR ===');
     console.error('Error:', error.message);
     
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: 'Failed to get meeting',
       error: error.message,

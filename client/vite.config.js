@@ -12,4 +12,22 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    // Optimize chunking for better caching
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Separate vendor libraries into chunks
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-mui': ['@mui/material', '@mui/icons-material', '@emotion/react', '@emotion/styled'],
+          'vendor-firebase': ['firebase'],
+          'vendor-socket': ['socket.io-client'],
+        },
+      },
+    },
+    // Improve chunk size warnings
+    chunkSizeWarningLimit: 600,
+    // Enable source maps for production debugging
+    sourcemap: true,
+  },
 })

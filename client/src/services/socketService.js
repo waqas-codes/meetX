@@ -5,7 +5,26 @@ let socket = null;
 export const connectSocket = () => {
   if (!socket) {
     const SERVER_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
-    socket = io(SERVER_URL);
+    socket = io(SERVER_URL, {
+      withCredentials: true, // Required for CORS with credentials
+      transports: ['websocket', 'polling'], // Fallback to polling if websocket fails
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+    });
+    
+    // Add connection event listeners for debugging
+    socket.on('connect', () => {
+      console.log('Socket connected:', socket.id);
+    });
+    
+    socket.on('connect_error', (error) => {
+      console.error('Socket connection error:', error.message);
+    });
+    
+    socket.on('disconnect', (reason) => {
+      console.log('Socket disconnected:', reason);
+    });
   }
   return socket;
 };

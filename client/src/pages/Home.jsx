@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Container,
@@ -7,6 +7,7 @@ import {
   Button,
   TextField,
   Paper,
+  LinearProgress,
 } from '@mui/material';
 import {
   Videocam as VideocamIcon,
@@ -16,16 +17,29 @@ import {
   SurroundSound as AudioIcon,
 } from '@mui/icons-material';
 import Navbar from '../components/Navbar';
-import { createMeeting } from '../services/meetingApi';
+import { createMeeting, checkServerHealth } from '../services/meetingApi';
 
 const Home = () => {
   const navigate = useNavigate();
   const [meetingId, setMeetingId] = useState('');
   const [loading, setLoading] = useState(false);
+  const [serverWarming, setServerWarming] = useState(false);
   const [error, setError] = useState(null);
+
+  // Wake up Render server on page load (cold start handling)
+  useEffect(() => {
+    const wakeServer = async () => {
+      // Check if server is awake, but don't block UI
+      const isHealthy = await checkServerHealth();
+      console.log('Server health check:', isHealthy ? 'awake' : 'may be sleeping');
+    };
+    
+    wakeServer();
+  }, []);
 
   const handleStartMeeting = async () => {
     setLoading(true);
+    setServerWarming(true);
     setError(null);
     try {
       const response = await createMeeting();
@@ -42,6 +56,7 @@ const Home = () => {
       alert(`Error: ${errorMsg}`);
     } finally {
       setLoading(false);
+      setServerWarming(false);
     }
   };
 
@@ -169,8 +184,34 @@ const Home = () => {
                 },
               }}
             >
-              {loading ? 'Creating...' : 'Start Meeting'}
+              {loading ? (serverWarming ? 'Waking up server...' : 'Creating...') : 'Start Meeting'}
             </Button>
+            
+            {/* Server warming progress indicator */}
+            {serverWarming && (
+              <Box sx={{ width: '100%', mt: 1 }}>
+                <LinearProgress 
+                  sx={{ 
+                    borderRadius: 1,
+                    backgroundColor: 'rgba(99, 102, 241, 0.2)',
+                    '& .MuiLinearProgress-bar': {
+                      backgroundColor: '#6366f1',
+                    },
+                  }} 
+                />
+                <Typography 
+                  variant="caption" 
+                  sx={{ 
+                    color: 'rgba(255,255,255,0.5)', 
+                    mt: 0.5, 
+                    display: 'block',
+                    textAlign: 'center',
+                  }}
+                >
+                  Server is starting up (this may take 20-30s on first load)
+                </Typography>
+              </Box>
+            )}
 
             <Box display="flex" gap={2} alignItems="center">
               <TextField
