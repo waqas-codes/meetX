@@ -6,8 +6,9 @@ export const connectSocket = () => {
   if (!socket) {
     const SERVER_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
     socket = io(SERVER_URL, {
-      withCredentials: true, // Required for CORS with credentials
-      transports: ['websocket', 'polling'], // Fallback to polling if websocket fails
+      // Note: withCredentials disabled for production cross-origin
+      // Enable only if backend has specific origin (not *) in CORS
+      transports: ['websocket', 'polling'], // Fallback to polling
       reconnection: true,
       reconnectionAttempts: 5,
       reconnectionDelay: 1000,

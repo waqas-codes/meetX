@@ -13,42 +13,46 @@ dotenv.config();
 const app = express();
 const httpServer = createServer(app);
 
-// Get allowed origins - always include localhost for development
-const allowedOrigins = process.env.FRONTEND_URL 
-  ? [process.env.FRONTEND_URL, 'http://localhost:3000', 'http://localhost:5173']
-  : ['http://localhost:3000', 'http://localhost:5173', 'http://127.0.0.1:3000', 'http://127.0.0.1:5173'];
+// CORS Configuration
+// For production: Set FRONTEND_URL to your deployed frontend domain
+// For development: Leave empty to allow all origins
+const isProduction = process.env.NODE_ENV === 'production';
+const frontendUrl = process.env.FRONTEND_URL;
 
-console.log('Allowed CORS origins:', allowedOrigins);
+// Socket.IO CORS setup
+const socketCors = frontendUrl 
+  ? { origin: [frontendUrl, 'http://localhost:3000'], methods: ['GET', 'POST'], credentials: false }
+  : { origin: '*', methods: ['GET', 'POST'], credentials: false }; // Allow all for testing
+
+console.log('Socket.IO CORS:', socketCors);
 
 const io = new Server(httpServer, {
-  cors: {
-    origin: allowedOrigins,
-    methods: ['GET', 'POST'],
-    credentials: true,
-  },
-  // Add ping timeout to detect disconnections faster
+  cors: socketCors,
   pingTimeout: 60000,
   pingInterval: 25000,
 });
 
-// CORS configuration - must be before routes
-const corsOptions = {
-  origin: function (origin, callback) {
-    // Allow requests with no origin (mobile apps, curl, etc.)
-    if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      console.warn('CORS blocked origin:', origin);
-      callback(new Error('Not allowed by CORS'));
+// Express CORS configuration
+const corsOptions = frontendUrl
+  ? {
+      origin: function (origin, callback) {
+        if (!origin) return callback(null, true);
+        const allowed = [frontendUrl, 'http://localhost:3000', 'http://localhost:5173'];
+        if (allowed.includes(origin)) {
+          callback(null, true);
+        } else {
+          console.warn('CORS blocked origin:', origin);
+          callback(new Error('Not allowed by CORS'));
+        }
+      },
+      credentials: false,
+      optionsSuccessStatus: 200,
     }
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
-  optionsSuccessStatus: 200, // Some legacy browsers choke on 204
-};
+  : {
+      origin: '*', // Allow all origins for testing
+      credentials: false,
+      optionsSuccessStatus: 200,
+    };
 
 // Apply CORS to all routes
 app.use(cors(corsOptions));

@@ -1,11 +1,10 @@
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 // Timeout duration for requests (in ms)
-// Local: 8s is plenty (no cold start)
-// Production: 25s for Render cold start
-const REQUEST_TIMEOUT = 8000;
-const MAX_RETRIES = 1; // Fewer retries for local
-const RETRY_DELAY = 1000; // 1 second between retries
+// Production: 25s for Render cold start (server sleeps after inactivity)
+const REQUEST_TIMEOUT = 25000;
+const MAX_RETRIES = 2; // More retries for production
+const RETRY_DELAY = 3000; // 3 seconds between retries (exponential backoff)
 
 // Helper function for fetch with timeout
 const fetchWithTimeout = async (url, options, timeout) => {
